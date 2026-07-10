@@ -54,6 +54,15 @@ reviewer, and every merge/split decision is permanently logged.
 See [`docs/business-model.md`](docs/business-model.md) and
 [`docs/operator-guide.md`](docs/operator-guide.md).
 
+## Product ↔ party join
+
+Catalog operators that need to attach brand-owners / manufacturers /
+merchants to GTINs should use the portable join contract
+[`kotoba-lang/product-party`](https://github.com/kotoba-lang/product-party)
+(ADR-2607106100) and the runtime facade `cloud-itonami.product-party` in
+`gftdcojp/cloud-itonami`. This blueprint remains the OSS product-master
+*service* design; the join lib is the edge graph, not a second PIM.
+
 ## License
 
 AGPL-3.0-or-later.
