@@ -12,6 +12,18 @@ systems -- the OSS-operator counterpart to
 own canonical-product-identity function, so a retailer or distributor can
 self-host instead of paying a closed PIM SaaS.
 
+**Status: design blueprint, no code implemented yet.** This repository
+has zero files under `src/` and no `test/` directory — the
+Canonicalization Advisor and Product Catalog Governor described below
+do not exist in code. It is not (yet) a governed Advisor⊣Governor
+actuation actor; the Core Contract section specifies what that
+pipeline is intended to enforce once built, not current behavior. See
+[`cloud-itonami-isco-1324`](https://github.com/cloud-itonami/cloud-itonami-isco-1324)
+for this fleet's minimal implemented reference (`actor`/`advisor`/
+`governor`/`store`), and the `cloud-itonami-assoc-*` /
+`cloud-itonami-municipality-*` / `cloud-itonami-lei-*` repos for this
+fleet's honest not-an-actuation-actor disclaimer pattern.
+
 ## Why this is not code-keyed like ISIC/ISCO/COFOG/UNSPSC blueprints
 
 GTIN is an **identifier system**, not a classification taxonomy (see
@@ -28,7 +40,7 @@ matching, deduplication) -- the same digital/data-service exemption class
 as [`cloud-itonami-6310`](https://github.com/cloud-itonami/cloud-itonami-6310)
 (HR SaaS replacement).
 
-## Core Contract
+## Core Contract (design intent — not yet implemented)
 
 ```text
 raw product record (any code family: GTIN/JAN/UPC/EAN)
@@ -40,10 +52,13 @@ Canonicalization Advisor -> Product Catalog Governor -> merge/register, or human
 canonical product record + alias edges + audit ledger
 ```
 
-No automated match can merge two products into one canonical identity, or
-split a pack-size variant into a shared identity, without Product Catalog
-Governor clearance -- ambiguous merges always escalate to a human
-reviewer, and every merge/split decision is permanently logged.
+**No code exists yet in this repo** -- no `src/`, no `test/`, only
+this design document plus `blueprint.edn` and `docs/`. Once built, no
+automated match will be able to merge two products into one canonical
+identity, or split a pack-size variant into a shared identity, without
+Product Catalog Governor clearance -- ambiguous merges will always
+escalate to a human reviewer, and every merge/split decision will be
+permanently logged. None of this is enforced today.
 
 ## Required capabilities
 
