@@ -1,0 +1,54 @@
+(ns gtincatalog.sim
+  "Offline demo: drive one clean registration, one HARD pack-size merge
+  block, and one genuine-duplicate merge that pauses for a human,
+  through the REAL compiled actor graph. `clojure -M:dev:run`."
+  (:require [gtincatalog.operation :as operation]
+            [gtincatalog.store :as store]
+            [langgraph.graph :as g]))
+
+(def ^:private ctx {:actor-id "catalog-demo" :phase 3})
+
+(def ^:private can "gtin.05449000000996")
+(def ^:private six "prod.coca-cola-330ml-6pack")
+(def ^:private dup "prod.coca-cola-330ml-dup")
+
+(defn- run-req! [actor tid request]
+  (g/run* actor {:request request :context ctx} {:thread-id tid}))
+
+(defn -main [& _]
+  (let [s (store/seed-db)
+        actor (operation/build s)]
+
+    (println "\n=== 1. 新規正規商品の登録（自動コミット）===")
+    (let [r (run-req! actor "sim-1"
+                      {:op :register-product
+                       :patch {:gtin "4902102072618" :name "い・ろ・は・す 555ml"
+                               :net-content 555 :uom "ml" :pack-count 1}})]
+      (println "  status     :" (:status r))
+      (println "  disposition:" (:disposition (:state r))))
+
+    (println "\n=== 2. 6缶パックを単缶へ統合（HARD hold、人間にすら聞かない）===")
+    (let [r (run-req! actor "sim-2"
+                      {:op :propose-merge :patch {:from six :into can :confidence 0.99}})]
+      (println "  status     :" (:status r))
+      (println "  disposition:" (:disposition (:state r)))
+      (let [v (:violations (last (store/ledger s)))]
+        (println "  violations :" (mapv :rule v))
+        (println "  conflicts  :" (:conflicts (first v)))))
+
+    (println "\n=== 3. 真の重複の統合（識別属性は全一致 → 人間の承認待ちで停止）===")
+    (let [held (run-req! actor "sim-3"
+                         {:op :propose-merge :patch {:from dup :into can :confidence 0.95}})]
+      (println "  status     :" (:status held))
+      (println "  frontier   :" (:frontier held))
+      (println "  " dup "の状態:" (:status (store/product-record s dup)) "（承認前）")
+      (let [ok (g/run* actor {:approval {:status :approved :by "steward-01"}}
+                       {:thread-id "sim-3" :resume? true})]
+        (println "  --- 人間 steward-01 が承認 ---")
+        (println "  status     :" (:status ok))
+        (println "  " dup "の状態:" (:status (store/product-record s dup)))
+        (println "  名寄せ後の解決先:" (store/resolve-canonical s dup))))
+
+    (println "\n=== 監査台帳 ===")
+    (doseq [f (store/ledger s)]
+      (println " " (:t f) (:op f) (or (:basis f) "")))))
