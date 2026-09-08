@@ -59,7 +59,7 @@
   3 separates 'refuse outright' from 'a human may consider it', which is
   the distinction the README's 'ambiguous merges always escalate'
   promise actually requires."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [gtincatalog.store :as store]
             [kotoba.product-party :as pp]))
 
@@ -196,7 +196,7 @@
       :detail (str ":effect は :propose のみ許可されるが " (pr-str (:effect proposal)) " が提案された")}]))
 
 (defn- text-blob [proposal]
-  (str/lower-case (pr-str (select-keys proposal [:op :summary :rationale :cites :value]))))
+  (str/lower (pr-str (select-keys proposal [:op :summary :rationale :cites :value]))))
 
 (defn- scope-exclusion-violations
   "HARD, PERMANENT block, evaluated UNCONDITIONALLY on every proposal."
