@@ -105,9 +105,9 @@ keeps pointing at its winner, so an alias captured before the merge
 still resolves and the history of the identity survives.
 
 ```bash
-clojure -M:dev:run   # clean registration, HARD pack-size block, human-gated merge
-clojure -M:test      # 34 tests, 114 assertions
-clojure -M:lint
+kbb -M:dev:run   # clean registration, HARD pack-size block, human-gated merge
+kbb -M:test      # 34 tests, 114 assertions
+kbb -M:lint
 ```
 
 ## Required capabilities
