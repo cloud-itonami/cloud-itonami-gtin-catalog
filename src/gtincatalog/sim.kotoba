@@ -1,7 +1,7 @@
 (ns gtincatalog.sim
   "Offline demo: drive one clean registration, one HARD pack-size merge
   block, and one genuine-duplicate merge that pauses for a human,
-  through the REAL compiled actor graph. `clojure -M:dev:run`."
+  through the REAL compiled actor graph. `kbb -M:dev:run`."
   (:require [gtincatalog.operation :as operation]
             [gtincatalog.store :as store]
             [langgraph.graph :as g]))
